@@ -1,0 +1,62 @@
+// Gradle-Plugins fuer dieses Projekt auswaehlen
+plugins {
+    // Java-Applikation bauen
+    id 'application'
+    // Plugin fuer JavaFX-Projekte
+    id 'org.openjfx.javafxplugin' version '0.1.0'
+
+    // Unit-Test-Bibliotheken
+    id 'jvm-test-suite'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+application {
+    mainClass = 'de.hsrm.mi.ChatApp'
+} 
+
+// Verwendung des FX-Plugins: FX-Version und Module wuenschen
+javafx {
+    version = "21"
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
+}
+
+// Test-Konfiguration (./gradlew test)
+testing {
+    suites { 
+        test { 
+            useJUnitJupiter() 
+        }
+    }
+}
+
+// Zusaetzlich benuetigte Abhaengigkeiten
+dependencies {
+}
+
+// Abhaengigkeiten herunterladen von...
+repositories {
+    mavenCentral()
+}
+
+/* ./gradlew fatJar erzeugt Standalone-JAR (App incl. benoetigter Bibliotheken)
+ * Datei wird in Ordner build/libs angelegt
+ * Dateiname ist letzte Komponente von application.mainClass (s.o.) + Endung ".jar"
+ * Ausfuehrung mit java -jar <dateiname>
+ * Mehr Infos: https://www.baeldung.com/gradle-fat-jar
+ */
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': application.mainClass
+    }
+    archiveBaseName = application.mainClass.get().split('\\.').last()
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+

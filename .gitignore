@@ -1,0 +1,15 @@
+# === Java / Gradle ===
+/build/
+/bin/
+/out/
+/.gradle/
+/**/*.class
+# === IntelliJ / VS Code / Eclipse ===
+.idea/
+.vscode/
+.project
+.classpath
+.settings/
+# === System Files ===
+.DS_Store
+Thumbs.db
